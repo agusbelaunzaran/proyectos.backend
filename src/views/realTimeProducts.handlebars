@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Productos en Tiempo Real</title>
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+    <ul>
+        {{#each productos}}
+            <li>{{this}}</li>
+        {{/each}}
+    </ul>
+
+    <h2>Agregar Producto</h2>
+    <form action="/realtimeproducts/crearProducto" method="post">
+        <input type="text" name="nombre" placeholder="Nombre del Producto" required>
+        <input type="submit" value="Agregar Producto">
+    </form>
+
+    <h2>Eliminar Producto</h2>
+    <form action="/realtimeproducts/eliminarProducto" method="post">
+        <input type="text" name="id" placeholder="ID del Producto a Eliminar" required>
+        <input type="submit" value="Eliminar Producto">
+    </form>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    const socket = io();
+           socket.on('productoCreado', function(producto) {
+   
+    const listaProductos = document.querySelector('ul');
+
+    
+    const nuevoElemento = document.createElement('li');
+    nuevoElemento.textContent = producto.nombre;
+
+    listaProductos.appendChild(nuevoElemento);
+});
+
+       socket.on('productoEliminado', function(productoId) {
+    
+    const listaProductos = document.querySelector('ul');
+
+ 
+    const elementoAEliminar = listaProductos.querySelector('li[data-id="' + productoId + '"]');
+
+   
+    if (elementoAEliminar) {
+        elementoAEliminar.parentNode.removeChild(elementoAEliminar);
+    }
+});
+    </script>
+</body>
+</html>
